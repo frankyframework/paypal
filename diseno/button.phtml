@@ -7,6 +7,30 @@ paypal.Buttons({
         shape:  'rect',
         label:  'paypal',
         borderRadius: 10
-    }
+    },
+    async createOrder() {
+
+        const response = await fetch("/payment/paypal/createOrder.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+            body: JSON.stringify({})
+        });
+        const order = await response.json();
+        return order.id;
+    },
+    async onApprove(data) {
+        const response = await fetch("/payment/paypal/captureOrder.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+        })
+
+        const order = await response.json();
+        placeOrder();
+}
 }).render('#paypal-button-container');
 </script>

@@ -15,9 +15,15 @@ return array(
                 array('path' => 'ecommerce/paypal/name',
                           'type' => 'text',
                           'label' => 'Nombre',
-                          'validation' => array('required' => false),
+                          'validation' => array('required' => true),
                           'value' => ''
                         ),
+                        array('path' => 'ecommerce/paypal/brand',
+                        'type' => 'text',
+                        'label' => 'Marca',
+                        'validation' => array('required' => true),
+                        'value' => ''
+                      ),
                 array('path' => 'ecommerce/paypal/sandbox',
                               'type' => 'select',
                               'label' => 'SANDBOX',
@@ -85,13 +91,7 @@ return array(
                         'label' => 'Succes page',
                         'validation' => array('required' => false),
                         'value' => ''
-                ),
-                array('path' => 'ecommerce/paypal/callbackerror',
-                        'type' => 'text',
-                        'label' => 'Error page',
-                        'validation' => array('required' => false),
-                        'value' => ''
-                ),
+                )
 
           )
   )

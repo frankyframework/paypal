@@ -5,9 +5,9 @@ return [
     "data" => [
         "name" =>  getCoreConfig("ecommerce/paypal/name"),
         "enabled" => getCoreConfig("ecommerce/paypal/enabled"),
-        "html" => render("button.phtml"),
+        "html" => render(PROJECT_DIR."/modulos/paypal/diseno/button.phtml"),
         "execute" => "placeOrderPaypal",
-        "callback" => getCallbakPayPal(),
+        "callback" => getCallbackPayPal(),
         "email_template" =>  getCoreConfig("ecommerce/paypal/email-order"),
         ]
     ]
