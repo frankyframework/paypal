@@ -49,7 +49,6 @@ $data = [
 ];
 
 
-
 $MyCarritoProducto->setTampag(1000);
 if($MyCarritoProducto->getData("", $MyCarrito->getId()) == REGISTRO_SUCCESS)
 {

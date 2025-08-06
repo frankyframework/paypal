@@ -51,7 +51,7 @@ function placeOrderPaypal() {
     }
     
     return [
-        "total" => $response["purchase_units"][0]['payments']['captures'][0]['amount']['vañue'],
+        "total" => $response["purchase_units"][0]['payments']['captures'][0]['amount']['value'],
         "extra_data" => $response,
         "payment_method" => "paypal",
         "created_at" => date('Y-m-d H:i:s'),
