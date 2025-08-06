@@ -17,7 +17,7 @@ $data = [
             ],
             "shipping"=> [
               "currency_code"=> DATA_STORE_CONFIG['abreviatura'],
-              "value"=> $MyCarrito->getShippingPrice()
+              "value"=> ($MyCarrito->getShippingPrice() > 0 ? $MyCarrito->getShippingPrice() :0.0)
             ],
             "discount"=> [
               "currency_code"=> DATA_STORE_CONFIG['abreviatura'],
