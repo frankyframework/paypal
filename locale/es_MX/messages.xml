@@ -1,0 +1,12 @@
+<?xml version='1.0' standalone='yes'?>
+<mensajes>
+    <prefijo>paypal_</prefijo>
+        <mensaje>
+        <llave>order_canceled_error</llave>
+        <valor>La orden ha sido cancelada, sim embargo paypal no pudo hacer el reembolso</valor>
+    </mensaje>    
+    <mensaje>
+        <llave>order_canceled_success</llave>
+        <valor>La orden ha sido cancelada, paypal ha echo un reembolso</valor>
+    </mensaje>    
+</mensajes>
