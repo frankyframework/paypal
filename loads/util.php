@@ -49,14 +49,22 @@ function placeOrderPaypal() {
     if(!isset($response["status"]) || $response["status"] != "COMPLETED") {
         return false;
     }
+
+    if($response["purchase_units"][0]['payments']['captures'][0]['status'] == "COMPLETED") {
+        $status = "processing";
+        $state = "processing";
+    } else {
+        $status = "pending";
+        $state = "new";
+    }
     
     return [
         "total" => $response["purchase_units"][0]['payments']['captures'][0]['amount']['value'],
         "extra_data" => $response,
         "payment_method" => "paypal",
         "created_at" => date('Y-m-d H:i:s'),
-        "status" => "processing",
-        "state" => "processing",
+        "status" => $status,
+        "state" => $state,
         "data_email" => []
     ];
 }
