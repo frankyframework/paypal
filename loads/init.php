@@ -19,6 +19,8 @@ if(getCoreConfig("ecommerce/paypal/enabled") == 1){
         $MyMetatag->setCode('<script src="'.getCoreConfig("ecommerce/paypal/urljssandbox").'?client-id='.getCoreConfig("ecommerce/paypal/keysandbox").'&currency='.DATA_STORE_CONFIG['abreviatura'].'&components=buttons"></script>');
     }
     $ObserverManager->addObserver('cancel_order','cancelOrderPaypal');
+    $ObserverManager->addObserver('show_payment_data','showPaymentPaypalData');
+    
 
 }
 

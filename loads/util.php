@@ -177,4 +177,24 @@ function cancelOrderPaypal($id){
               
 }
 
+function showPaymentPaypalData($id) {
+
+    $EcommercePaymentModel = new \Ecommerce\model\EcommercePaymentModel();
+    $EcommercePaymentEntity = new \Ecommerce\entity\EcommercePaymentEntity();
+    $EcommercePaymentEntity->setOrderId($id);
+    $EcommercePaymentEntity->setPaymentMethod('paypal');
+    
+
+    $EcommercePaymentModel->setTampag(1);
+    if($EcommercePaymentModel->getData($EcommercePaymentEntity->getArrayCopy()) != REGISTRO_SUCCESS)
+    {
+        return false;
+    }
+
+    $registro = $EcommercePaymentModel->getRows();
+    $extraData = json_decode($registro["extra_data"],true);
+    
+    echo render(PROJECT_DIR."/modulos/paypal/diseno/payment.data.phtml",["data" => $extraData]);
+}
+
 ?>
