@@ -3,11 +3,15 @@ use Ecommerce\model\PedidosModel;
 use Ecommerce\entity\PedidosEntity;
 use Ecommerce\model\EcommercePaymentModel;
 use Ecommerce\entity\EcommercePaymentEntity;
+use Paypal\model\PaypalPaymentModel;
+use Paypal\entity\PaypalPaymentEntity;
 
 $PedidosModel = new PedidosModel();
 $PedidosEntity = new PedidosEntity();
 $EcommercePaymentModel = new EcommercePaymentModel();
 $EcommercePaymentEntity = new EcommercePaymentEntity();
+$PaypalPaymentModel = new PaypalPaymentModel();
+$PaypalPaymentEntity = new PaypalPaymentEntity();
 $PedidosEntity->setState("new");
 $PedidosEntity->setStatus("pending");
 $PedidosEntity->setPaymentMethod("paypal");
@@ -32,7 +36,15 @@ if($PedidosModel->getTotal() > 0)
                 $data = json_decode($_registro["extra_data"], true);
                
                 $captureId = $data["purchase_units"][0]['payments']['captures'][0]["id"];
-                if (verifyCapturePaypal($captureId)) {
+                $response = verifyCapturePaypal($captureId);
+
+
+                $PaypalPaymentEntity->exchangeArray([]);
+                $PaypalPaymentEntity->setOrderId($parentId);
+                $PaypalPaymentEntity->setCreatedAt(date('Y-m-d H:i:s'));
+                $PaypalPaymentEntity->setData(json_encode($response));
+                $PaypalPaymentModel->save($PaypalPaymentEntity->getArrayCopy());
+                if ($response["status"] == "COMPLETED") {
                     shellFontColor("[+] Orden ".$parentId." completada","verde");
                     $capturesComplete[] = $parentId;
                 } else {
@@ -77,9 +89,5 @@ function verifyCapturePaypal($id) {
     } else {
         $response = [];
     }
-    
-    if($response["status"] != "COMPLETED") {
-        return false;
-    }
-    return true;
+    return $response;
 }

@@ -1,0 +1,38 @@
+{
+    "schema" :
+    {
+        "attributes":[
+            {
+                "name":"id",
+                "type":"int",
+                "length":11,
+                "null":0,
+                "auto_increment":1
+            },
+            {
+                "name":"order_id",
+                "type":"int",
+                "length":11,
+                "null":1
+            },
+            {
+                "name":"data",
+                "type":"text",
+                "null":1
+            },
+            {
+                "name":"created_at",
+                "type":"datetime",
+                "null":0
+                
+            }
+
+        ],
+        "config":{
+            "primary":"id",
+            "engine":"MyISAM"
+        }
+    }
+    ,
+    "data":[]
+}
