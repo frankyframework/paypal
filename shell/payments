@@ -1,0 +1,85 @@
+<?php
+use Ecommerce\model\PedidosModel;
+use Ecommerce\entity\PedidosEntity;
+use Ecommerce\model\EcommercePaymentModel;
+use Ecommerce\entity\EcommercePaymentEntity;
+
+$PedidosModel = new PedidosModel();
+$PedidosEntity = new PedidosEntity();
+$EcommercePaymentModel = new EcommercePaymentModel();
+$EcommercePaymentEntity = new EcommercePaymentEntity();
+$PedidosEntity->setState("new");
+$PedidosEntity->setStatus("pending");
+$PedidosEntity->setPaymentMethod("paypal");
+$PedidosModel->setTampag(99999999999);
+
+$result	 		= $PedidosModel->getData($PedidosEntity->getArrayCopy());
+$capturesComplete = [];
+
+if($PedidosModel->getTotal() > 0)
+{
+    while($registro = $PedidosModel->getRows())
+    {
+       
+     
+        $parentId = $registro['id'];
+        $EcommercePaymentEntity->exchangeArray([]);
+        $EcommercePaymentEntity->setOrderId($parentId);
+        if ($EcommercePaymentModel->getData($EcommercePaymentEntity->getArrayCopy()) == REGISTRO_SUCCESS)
+        {
+            while($_registro = $EcommercePaymentModel->getRows())
+            {
+                $data = json_decode($_registro["extra_data"], true);
+               
+                $captureId = $data["purchase_units"][0]['payments']['captures'][0]["id"];
+                if (verifyCapturePaypal($captureId)) {
+                    shellFontColor("[+] Orden ".$parentId." completada","verde");
+                    $capturesComplete[] = $parentId;
+                } else {
+                    shellFontColor("[+] Orden ".$parentId." sin cambios","rojo");
+                }
+            }
+        }
+    }
+}
+
+foreach ($capturesComplete as $orderId) {
+    $PedidosEntity->exchangeArray([]);
+    $PedidosEntity->setId($orderId);
+    $PedidosEntity->setState("processing");
+    $PedidosEntity->setstatus("processing");
+    $PedidosModel->save($PedidosEntity->getArrayCopy());
+}
+
+function verifyCapturePaypal($id) {
+    $token = getTokenPaypal();
+
+    if(getCoreConfig("ecommerce/paypal/enabled") == 0) {
+        return false;
+    }
+
+    $url = (getCoreConfig('ecommerce/paypal/sandbox') == 1 ? getCoreConfig('ecommerce/paypal/urlapisandbox') : getCoreConfig('ecommerce/paypal/urlapi'));;
+
+    $curl = curl_init($url.'v2/payments/captures/'.$id);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_POST, false);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'Authorization: Bearer ' . $token,
+    'Accept: application/json',
+    'Content-Type: application/json'
+    ));
+    $response = curl_exec($curl); 
+    curl_close($curl);
+    if(!empty($response)){
+        $response = json_decode($response, true);
+    } else {
+        $response = [];
+    }
+    
+    if($response["status"] != "COMPLETED") {
+        return false;
+    }
+    return true;
+}
