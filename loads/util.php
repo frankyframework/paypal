@@ -53,9 +53,11 @@ function placeOrderPaypal() {
     if($response["purchase_units"][0]['payments']['captures'][0]['status'] == "COMPLETED") {
         $status = "processing";
         $state = "processing";
+        $invoice = 1;
     } else {
         $status = "pending";
         $state = "new";
+        $invoice = 0;
     }
     
     return [
@@ -65,6 +67,7 @@ function placeOrderPaypal() {
         "created_at" => date('Y-m-d H:i:s'),
         "status" => $status,
         "state" => $state,
+        "is_invoiced" => $invoice,
         "data_email" => []
     ];
 }
