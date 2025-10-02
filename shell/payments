@@ -5,7 +5,9 @@ use Ecommerce\model\EcommercePaymentModel;
 use Ecommerce\entity\EcommercePaymentEntity;
 use Paypal\model\PaypalPaymentModel;
 use Paypal\entity\PaypalPaymentEntity;
+use \Franky\Core\ObserverManager;
 
+$ObserverManager = new ObserverManager;
 $PedidosModel = new PedidosModel();
 $PedidosEntity = new PedidosEntity();
 $EcommercePaymentModel = new EcommercePaymentModel();
@@ -60,7 +62,9 @@ foreach ($capturesComplete as $orderId) {
     $PedidosEntity->setId($orderId);
     $PedidosEntity->setState("processing");
     $PedidosEntity->setstatus("processing");
+    $PedidosEntity->setIsInvoiced(1);
     $PedidosModel->save($PedidosEntity->getArrayCopy());
+    $ObserverManager->dispatch('invoice_order',["id" => $orderId]);
 }
 
 function verifyCapturePaypal($id) {
